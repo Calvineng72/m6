@@ -13,7 +13,7 @@ global.nodeConfig = global.nodeConfig || {
 };
 
 // Package for crawler
-// global.fetch = require('node-fetch');
+global.fetch = require('node-fetch');
 
 /*
     As a debugging tool, you can pass ip and port arguments directly.

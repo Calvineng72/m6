@@ -43,11 +43,15 @@ const start = function(onStart) {
       The url will have the form: http://node_ip:node_port/service/method
     */
 
+
+    // Write some code...
+
+
     const pathname = url.parse(req.url).pathname;
     const [, service, method] = pathname.split('/');
 
-    console.log(`[SERVER] (${global.nodeConfig.ip}:${global.nodeConfig.port})
-        Request: ${service}:${method}`);
+    // console.log(`[SERVER] (${global.nodeConfig.ip}:${global.nodeConfig.port})
+    //     Request: ${service}:${method}`);
 
     /*
 
@@ -63,6 +67,9 @@ const start = function(onStart) {
 
       Our nodes expect data in JSON format.
   */
+
+    // Write some code...
+
 
     let body = [];
 
@@ -84,8 +91,29 @@ const start = function(onStart) {
       body = serialization.deserialize(body);
       let args = body;
 
-
       /* Here, you can handle the service requests. */
+
+      // Write some code...
+
+      /*
+        Here, we provide a default callback which will be passed to services.
+        It will be called by the service with the result of it's call
+        then it will serialize the result and send it back to the caller.
+      */
+      const serviceCallback = (e, v) => {
+        res.end(serialization.serialize([e, v]));
+      };
+
+      if (global.toLocal.has(service)) {
+        const rpcFunction = global.toLocal.get(service);
+        if (method === 'call') {
+          rpcFunction(...args, serviceCallback);
+          return;
+        } else {
+          rpcFunction[method](...args, serviceCallback);
+          return;
+        }
+      }
 
       local.routes.get(service, (error, service) => {
         if (error) {
@@ -94,22 +122,18 @@ const start = function(onStart) {
           return;
         }
 
-        /*
-      Here, we provide a default callback which will be passed to services.
-      It will be called by the service with the result of it's call
-      then it will serialize the result and send it back to the caller.
-        */
-        const serviceCallback = (e, v) => {
-          res.end(serialization.serialize([e, v]));
-        };
+        // Write some code...
 
-        console.log(`[SERVER] Args: ${JSON.stringify(args)}
-            ServiceCallback: ${serviceCallback}`);
-
+        // console.log(`[SERVER] Args: ${JSON.stringify(args)}
+        //     ServiceCallback: ${serviceCallback}`);
         service[method](...args, serviceCallback);
       });
     });
   });
+
+
+  // Write some code...
+  global.localServer = server;
 
   /*
     Your server will be listening on the port and ip specified in the config
@@ -119,9 +143,8 @@ const start = function(onStart) {
     In this milestone, we'll be adding the ability to stop a node
     remotely through the service interface.
   */
-
   server.listen(global.nodeConfig.port, global.nodeConfig.ip, () => {
-    console.log(`Server running at http://${global.nodeConfig.ip}:${global.nodeConfig.port}/`);
+    // console.log(`Server running at http://${global.nodeConfig.ip}:${global.nodeConfig.port}/`);
     onStart(server);
   });
 };
