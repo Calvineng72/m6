@@ -1,7 +1,10 @@
+const {JSDOM} = require('jsdom');
+const {URL} = require('url');
+
 let getURLs = {};
 
 getURLs.map = (key, value) => {
-  // assumes key: url, value: text
+  // assumes key: url, value: HTML text/obj
   const originalURL = key;
   const dom = new JSDOM(value);
   const document = dom.window.document;
