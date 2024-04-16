@@ -27,7 +27,7 @@ getURLs.map = (key, value) => {
         fullURL = new URL(link.href);
       }
       s.add(link.href);
-      o.push(fullURL);
+      o.push(fullURL.toString());
     }
   }
 
