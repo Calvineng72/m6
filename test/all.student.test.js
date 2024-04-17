@@ -419,3 +419,228 @@ test('(0 pts) all.mr:crawler test #1', (done) => {
     });
   });
 });
+
+
+// test('(0 pts) all.mr:ii test #2', (done) => {
+//   let dataset = [
+//     {'https://www.example.com': `
+//     <!doctype html>
+//     <html>
+//     <head>
+//         <title>Example Domain</title>
+
+//         <meta charset="utf-8" />
+//         <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+//         <meta name="viewport" content="width=device-width, initial-scale=1" />
+//         <style type="text/css">
+//         body {
+//             background-color: #f0f0f2;
+//             margin: 0;
+//             padding: 0;
+//             font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+//         }
+//         div {
+//             width: 600px;
+//             margin: 5em auto;
+//             padding: 2em;
+//             background-color: #fdfdff;
+//             border-radius: 0.5em;
+//             box-shadow: 2px 3px 7px 2px rgba(0,0,0,0.02);
+//         }
+//         a:link, a:visited {
+//             color: #38488f;
+//             text-decoration: none;
+//         }
+//         @media (max-width: 700px) {
+//             div {
+//                 margin: 0 auto;
+//                 width: auto;
+//             }
+//         }
+//         </style>
+//     </head>
+
+//     <body>
+//     <div>
+//         <h1>Example Domain</h1>
+//         <p>This domain is for use in illustrative examples in documents. You may use this
+//         domain in literature without prior coordination or asking for permission.</p>
+//         <p><a href="https://www.iana.org/domains/example">More information...</a></p>
+//         <p><a href="https://www.iana.org/domains/essxample">More information...</a></p>
+//     </div>
+//     </body>
+//     </html>
+//     `},
+//     {'https://www.endinslash.com/': `
+//     <!doctype html>
+//     <html>
+//     <head>
+//         <title>Example Domain</title>
+
+//         <meta charset="utf-8" />
+//         <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+//         <meta name="viewport" content="width=device-width, initial-scale=1" />
+//         <style type="text/css">
+//         body {
+//             background-color: #f0f0f2;
+//             margin: 0;
+//             padding: 0;
+//             font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+//         }
+//         div {
+//             width: 600px;
+//             margin: 5em auto;
+//             padding: 2em;
+//             background-color: #fdfdff;
+//             border-radius: 0.5em;
+//             box-shadow: 2px 3px 7px 2px rgba(0,0,0,0.02);
+//         }
+//         a:link, a:visited {
+//             color: #38488f;
+//             text-decoration: none;
+//         }
+//         @media (max-width: 700px) {
+//             div {
+//                 margin: 0 auto;
+//                 width: auto;
+//             }
+//         }
+//         </style>
+//     </head>
+
+//     <body>
+//     <div>
+//         <h1>Example Domain</h1>
+//         <p>This domain is for use in illustrative examples in documents. You may use this
+//         domain in literature without prior coordination or asking for permission.</p>
+//         <p><a href="/www.iana.org/domains/example">More information...</a></p>
+//     </div>
+//     </body>
+//     </html>
+//     `},
+//     {'https://www.theslashthing.com': `
+//     <!doctype html>
+//     <html>
+//     <head>
+//         <title>Example Domain</title>
+
+//         <meta charset="utf-8" />
+//         <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+//         <meta name="viewport" content="width=device-width, initial-scale=1" />
+//         <style type="text/css">
+//         body {
+//             background-color: #f0f0f2;
+//             margin: 0;
+//             padding: 0;
+//             font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+//         }
+//         div {
+//             width: 600px;
+//             margin: 5em auto;
+//             padding: 2em;
+//             background-color: #fdfdff;
+//             border-radius: 0.5em;
+//             box-shadow: 2px 3px 7px 2px rgba(0,0,0,0.02);
+//         }
+//         a:link, a:visited {
+//             color: #38488f;
+//             text-decoration: none;
+//         }
+//         @media (max-width: 700px) {
+//             div {
+//                 margin: 0 auto;
+//                 width: auto;
+//             }
+//         }
+//         </style>
+//     </head>
+
+//     <body>
+//     <div>
+//         <h1>Example Domain</h1>
+//         <p>This domain is for use in illustrative examples in documents. You may use this
+//         domain in literature without prior coordination or asking for permission.</p>
+//         <p><a href="/www.iana.org/domains/example">More information...</a></p>
+//     </div>
+//     </body>
+//     </html>
+//     `},
+//   ];
+
+//   let expected = [{'https://www.example.com': ['https://www.iana.org/domains/example',
+//     'https://www.iana.org/domains/essxample']},
+//   {'https://www.endinslash.com/': ['https://www.endinslash.com/www.iana.org/domains/example']},
+//   {'https://www.theslashthing.com': ['https://www.theslashthing.com/www.iana.org/domains/example']}];
+
+//   let m1 = (key, value) => {
+//     const originalURL = key;
+//     console.log('5805805850580');
+//     const dom = new global.JSDOM(value);
+//     console.log('58258285288');
+//     const document = dom.window.document;
+//     let s = new Set();
+//     let out = {};
+//     let o = [];
+//     for (const link of document.links) {
+//       if (!s.has(link.href)) {
+//         let fullURL = originalURL;
+//         if (link.href.charAt(0) == '/') {
+//           if (originalURL.charAt(originalURL.length - 1) == '/') {
+//             fullURL = new global.URL(
+//                 link.href,
+//                 originalURL.substring(0, originalURL.length - 1),
+//             );
+//           } else {
+//             fullURL = new global.URL(link.href, originalURL);
+//           }
+//         } else {
+//           fullURL = new global.URL(link.href);
+//         }
+//         s.add(link.href);
+//         o.push(fullURL.toString());
+//       }
+//     }
+
+//     out[originalURL] = o;
+//     return out;
+//   };
+
+//   let r1 = (key, value) => {
+//     function onlyUnique(value, index, array) {
+//       return array.indexOf(value) === index;
+//     }
+//     let out = {};
+//     out[key] = values.filter(onlyUnique).sort();
+//     return out;
+//   };
+
+//   const doMapReduce = (cb) => {
+//     const keys = dataset.map((o) => Object.keys(o)[0]);
+//     distribution.dsm.mr.exec({keys: keys, map: m1, reduce: r1}, (e, v) => {
+//       try {
+//         expect(v).toEqual(expected);
+//         done();
+//       } catch (e) {
+//         done(e);
+//       }
+//     });
+//   };
+
+//   let cntr = 0;
+
+//   // We send the dataset to the cluster
+//   dataset.forEach((o) => {
+//     let key = Object.keys(o)[0];
+//     let value = o[key];
+//     distribution.dsm.store.put(value, key, (e, v) => {
+//       cntr++;
+//       // Once we are done, run the map reduce
+//       if (cntr === dataset.length) {
+//         doMapReduce();
+//       }
+//     });
+//   });
+// });

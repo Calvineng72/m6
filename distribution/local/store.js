@@ -5,7 +5,7 @@ const fs = require('fs');
 const path = require('path');
 
 const baseDir = path.resolve(__dirname, '../..', 'store');
-const storeDir = path.join(baseDir, id.getNID(global.nodeConfig));
+const storeDir = path.join(baseDir, id.getSID(global.nodeConfig));
 if (!fs.existsSync(storeDir)) {
   fs.mkdirSync(storeDir, {recursive: true});
 }
