@@ -1,7 +1,10 @@
 let crawler = {};
 
+// can either make the url the key or value
 crawler.map = (_key, value) => {
   return new Promise((resolve, reject) => {
+    // before fetch, check if value/url is in the local.store; if it is not, then return
+    // empty object or something (does mr account for returning empty object/not doing anything with it?)
     global.fetch(value)
         .then((response) => {
           return response.text();
@@ -29,7 +32,7 @@ crawler.reduce = (key, values) => {
   // for each URL in values, check if in v ^^^; if in v, do nothing, if not in v,
   // push to some array, at the end, all.store.append(visitedurls, this array)
   // if error, all.store.put(key: 'visitedurls', values)
-  // return [{key: value1}, {key: value2}]
+  // return {key: [url1, url2, url3...]}
   let out = {};
   out[key] = values;
   return out;

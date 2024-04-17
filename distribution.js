@@ -16,17 +16,17 @@ global.nodeConfig = global.nodeConfig || {
 global.fetch = require('node-fetch');
 
 
-try {
-  global.JSDOM = require('jsdom').JSDOM;
-} catch (e) {
-  console.log(e);
-}
+// try {
+//   global.JSDOM = require('jsdom').JSDOM;
+// } catch (e) {
+//   console.log(e);
+// }
 
-console.log('2000000');
+// console.log('2000000');
 
-global.URL = require('url').URL;
+// global.URL = require('url').URL;
 
-console.log('20000');
+// console.log('20000');
 
 /*
     As a debugging tool, you can pass ip and port arguments directly.
