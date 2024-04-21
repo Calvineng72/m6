@@ -19,6 +19,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "html-to-text": "^9.0.5",
     "jsdom": "^24.0.0",
     "node-fetch": "^2.7.0",
     "sync-fetch": "^0.5.2",

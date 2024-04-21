@@ -10,7 +10,8 @@ const mr = function(config) {
     const keys = [];
 
     for (const object of objectArray) {
-      keys.push(...Object.values(object)[0]);
+      const key = distribution.util.id.getID(Object.keys(object)[0]);
+      keys.push(key);
     }
 
     const uniqueKeys = keys.filter(
@@ -38,6 +39,7 @@ const mr = function(config) {
       const keys = Object.values(configuration.keys);
       const map = configuration.map;
       const reduce = configuration.reduce;
+      const rounds = configuration.rounds || 0;
 
       // Create MapReduce service for the nodes
       let service = {};
@@ -75,7 +77,8 @@ const mr = function(config) {
                   return;
                 }
 
-                const result = map(localKey, value);
+                const [dataKey, dataValue] = Object.entries(value)[0];
+                const result = map(dataKey, dataValue);
                 results.push(result);
 
                 localKeysLength--;
@@ -237,7 +240,7 @@ const mr = function(config) {
       const serviceName = `mr-${serviceID}`;
       // Initializations for iterative map reduce
       // setting to 0 is non - iterative map reduce
-      const maxMapReduceIterations = 0;
+      const maxMapReduceIterations = rounds;
       let currentIteration = 0;
       // Accumulator of all the keys seen through iterative map reduce
       let allMapReduceData = new Map();
@@ -349,30 +352,33 @@ const mr = function(config) {
               // mapReduceResults has the structure
               //  [{nextURL1: originalURL},
               // {nextURL2: originalURL}, ...]
-              const mapReduceResults = retrievedResults.flat((depth = 3));
+              const mapReduceResults = retrievedResults.flat(depth = 3);
+              const mapReduceResultsKeys = [];
 
               let count = mapReduceResults.length;
               // Store into all-time accumulator
               // each result is {nextURL1: originalURL}
               for (result of mapReduceResults) {
-                // key is nextURL1
-                const key = Object.keys(result)[0];
+                const resultURL = Object.keys(result)[0];
+                const key = distribution.util.id.getID(resultURL);
+
+                mapReduceResultsKeys.push(key);
 
                 // if already have key in map, then append originalURL
                 // (because this URL could come from multiple places)
-                if (allMapReduceData.has(key)) {
+                if (allMapReduceData.has(resultURL)) {
                   allMapReduceData.set(
-                      key,
-                      allMapReduceData.get(key).push(result[key]),
+                      resultURL,
+                      allMapReduceData.get(resultURL).push(result[resultURL]),
                   );
                 } else {
                   // set key, and then array that just has [originalURL]
-                  allMapReduceData.set(key, [result[key]]);
+                  allMapReduceData.set(resultURL, [result[resultURL]]);
                 }
 
                 // put {newURL1: originalURL} object into store under newURL1 key
                 // (which is a URL that will get cleaned up anyways through the store)
-                distribution[gid].store.put(result, key, (e, v) => {
+                distribution[context.gid].store.put(result, key, (e, v) => {
                   if (e) {
                     callback(e, null);
                     return;
@@ -389,7 +395,7 @@ const mr = function(config) {
 
                     if (currentIteration < maxMapReduceIterations) {
                       currentIteration += 1;
-                      startMapReduce();
+                      distributedMap();
                     } else {
                       const outputObjectArray = mapToObjectArray(allMapReduceData);
                       callback(null, outputObjectArray);

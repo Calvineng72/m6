@@ -33,6 +33,7 @@ store.get = (key, callback) => {
         callback(null, keys);
       }
     } catch (err) {
+      console.error(err);
       callback(new Error('There was an error reading the directory!'), null);
     }
     return;
@@ -45,6 +46,7 @@ store.get = (key, callback) => {
     const data = fs.readFileSync(filePath, 'utf8');
     callback(null, deserialize(data));
   } catch (err) {
+    console.error(err);
     callback(new Error('The key could not be found!'), null);
   }
 };
@@ -75,6 +77,7 @@ store.put = (value, key, callback) => {
     fs.writeFileSync(filePath, serialize(value), 'utf8');
     callback(null, value);
   } catch (err) {
+    console.error(err);
     callback(new Error('The value could not be stored'), null);
   }
 };
@@ -102,6 +105,7 @@ store.del = (key, callback) => {
       fs.unlinkSync(filePath);
       callback(null, value);
     } catch (err) {
+      console.error(err);
       callback(new Error('There was an error deleting the file!'), null);
     }
   });
@@ -113,7 +117,11 @@ store.append = (value, key, callback) => {
 
   distribution.local.store.get(key, (err, data) => {
     if (!err) {
-      data[mapKey].push(mapValue);
+      try {
+        data[mapKey].push(mapValue);
+      } catch (err) {
+        data = {[mapKey]: [mapValue]};
+      }
     } else {
       data = {[mapKey]: [mapValue]};
     }
