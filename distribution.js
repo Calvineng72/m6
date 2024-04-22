@@ -24,6 +24,10 @@ process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0;
 // Set for visited URLs
 global.visited = new Set();
 
+// Pacakges for indexer
+global.natural = require('natural');
+global.stopwords = require('stopwords').english;
+
 /*
     As a debugging tool, you can pass ip and port arguments directly.
     This is just to allow for you to easily startup nodes from the terminal.
