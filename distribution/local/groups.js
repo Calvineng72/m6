@@ -10,7 +10,6 @@ const groups = {
     if (configuration.gid) {
       groupName = configuration.gid;
     } else {
-      ;
       groupName = configuration;
     }
 
@@ -28,7 +27,6 @@ const groups = {
     if (configuration.gid) {
       groupName = configuration.gid;
     } else {
-      ;
       groupName = configuration;
     }
 
@@ -49,7 +47,6 @@ const groups = {
       groupName = configuration.gid;
       config = configuration;
     } else {
-      ;
       groupName = configuration;
       config = {gid: configuration};
     }
@@ -89,7 +86,6 @@ const groups = {
     if (configuration.gid) {
       groupName = configuration.gid;
     } else {
-      ;
       groupName = configuration;
     }
 
@@ -119,7 +115,6 @@ const groups = {
     if (configuration.gid) {
       groupName = configuration.gid;
     } else {
-      ;
       groupName = configuration;
     }
 

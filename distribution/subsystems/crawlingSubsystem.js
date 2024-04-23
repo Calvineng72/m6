@@ -33,7 +33,7 @@ crawler.map = (key, _value) => {
   // 3) Convert the HTML to text and store text with store
   const text = global.convert(html);
   const textKey = `${newID}:text`;
-  const textInfo = {url: url, text: text};
+  const textInfo = {[url]: text};
   distribution.all.store.put(textInfo, textKey, (e, _v) => {
     if (e) return null;
   });

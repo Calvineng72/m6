@@ -21,7 +21,9 @@
   "dependencies": {
     "html-to-text": "^9.0.5",
     "jsdom": "^24.0.0",
+    "natural": "^7.0.5",
     "node-fetch": "^2.7.0",
+    "stopwords": "^0.0.9",
     "sync-fetch": "^0.5.2",
     "url": "^0.11.3",
     "yargs": "^17.7.2"
