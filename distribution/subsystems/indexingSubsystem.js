@@ -10,19 +10,23 @@ indexer.map = (key, value) => {
   // 3) Remove stopwords
   words = words.filter((w) => !global.stopwords.includes(w));
 
-  // 4) Stem the words and return
+  // 4) Stem the words
   let stemmer = global.natural.PorterStemmer;
-  return words.map((word) =>
-    ({[stemmer.stem(word)]: {count: 1, url: key}}));
+  words = words.map((word) => stemmer.stem(word));
 
-  // // 5) Create the index
-  // words.forEach((w) => {
-  //   let o = {};
-  //   o[w] = {count: 1, url: key};
-  //   out.push(o);
-  // });
+  // 5) Generate bigrams and trigrams
+  const ngrams = [...words];
 
-  // return out;
+  for (let n = 2; n <= 3; n++){
+    for (let i = 0; i <= words.length - n; i++) {
+      ngrams.push(words.slice(i, i + n).join(" "));
+    };
+  };
+
+  // 6) return {[ngram]: {count: 1, url: key}}
+  output = ngrams.map((ngram) => ({[ngram]: {count: 1, url: key}}));
+  
+  return output;
 };
 
 // Input: {word: [{'url': url1, 'count': count1}, ...]}
