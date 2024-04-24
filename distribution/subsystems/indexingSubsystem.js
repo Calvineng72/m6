@@ -8,7 +8,7 @@ indexer.map = (key, value) => {
   let words = value.split(/(\s+)/).filter((e) => e !== ' ');
 
   // 3) Remove stopwords
-  words = words.filter((w) => !global.stopwords.includes(w));
+  words = words.filter((word) => !global.stopwords.includes(word));
 
   // 4) Stem the words
   let stemmer = global.natural.PorterStemmer;
@@ -17,15 +17,15 @@ indexer.map = (key, value) => {
   // 5) Generate bigrams and trigrams
   const ngrams = [...words];
 
-  for (let n = 2; n <= 3; n++){
+  for (let n = 2; n <= 3; n++) {
     for (let i = 0; i <= words.length - n; i++) {
-      ngrams.push(words.slice(i, i + n).join(" "));
+      ngrams.push(words.slice(i, i + n).join(' '));
     };
   };
 
   // 6) return {[ngram]: {count: 1, url: key}}
   output = ngrams.map((ngram) => ({[ngram]: {count: 1, url: key}}));
-  
+
   return output;
 };
 

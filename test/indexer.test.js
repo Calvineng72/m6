@@ -114,20 +114,20 @@ test('(0 pts) indexer subsystem', (done) => {
   /* Sanity check: map and reduce locally */
   // sanityCheck(m, r, dataset, expected, done);
 
-    /* Now we do the same thing but on the cluster */
-    let keys = dataset.map((o) => id.getID(Object.keys(o)[0]));
-    const doMapReduce = (_cb) => {
-      distribution.all.mr.exec({keys: keys, map: m, reduce: r}, (_e, v) => {
-        try {
-          expect(v).toEqual(expect.arrayContaining(expected));
-          done();
-        } catch (e) {
-          done(e);
-        }
-      });
-    };
+  /* Now we do the same thing but on the cluster */
+  let keys = dataset.map((o) => id.getID(Object.keys(o)[0]));
+  const doMapReduce = (_cb) => {
+    distribution.all.mr.exec({keys: keys, map: m, reduce: r}, (_e, v) => {
+      try {
+        expect(v).toEqual(expect.arrayContaining(expected));
+        done();
+      } catch (e) {
+        done(e);
+      }
+    });
+  };
 
-    let cntr = 0;
+  let cntr = 0;
 
   // We send the dataset to the cluster
   dataset.forEach((o) => {
