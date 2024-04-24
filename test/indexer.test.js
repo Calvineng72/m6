@@ -94,7 +94,7 @@ const indexer = require('../distribution/subsystems/indexingSubsystem');
 const indexerMap = indexer.map;
 const indexerReduce = indexer.reduce;
 
-test('(0 pts) crawler subsystem', (done) => {
+test('(0 pts) indexer subsystem', (done) => {
   let m = indexerMap;
   let r = indexerReduce;
 

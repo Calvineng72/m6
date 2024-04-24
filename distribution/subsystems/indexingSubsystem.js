@@ -1,5 +1,16 @@
 let indexer = {};
 
+function generateNGrams(text, n) {
+  const words = text.split(" ");
+  const ngrams = [];
+  
+  for (let i = 0; i <= words.length - n; i++) {
+      ngrams.push(words.slice(i, i + n).join(" "));
+  }
+  
+  return ngrams;
+}
+
 indexer.map = (key, value) => {
   // 1) Clean the text
   value = value.replace(/[^a-zA-Z ]/g, '').toLowerCase();
@@ -12,8 +23,14 @@ indexer.map = (key, value) => {
 
   // 4) Stem the words and return
   let stemmer = global.natural.PorterStemmer;
-  return words.map((word) =>
+  words = words.map((word) =>
     ({[stemmer.stem(word)]: {count: 1, url: key}}));
+
+  console.log('EEE', words)
+  words = [...words, generateNGrams(words, 2)]
+  console.log('FFF', words)
+
+  return words;
 
   // // 5) Create the index
   // words.forEach((w) => {
