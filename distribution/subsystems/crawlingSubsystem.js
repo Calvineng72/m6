@@ -12,6 +12,8 @@ crawler.map = (key, _value) => {
   const url = key;
   const newID = distribution.util.id.getID(url);
 
+  console.log('15555555 ' + url);
+
 
   // 1) Check if the page has already been visited
   if (global.visited.has(url)) {
@@ -29,11 +31,14 @@ crawler.map = (key, _value) => {
     return null;
   }
 
-
   // 3) Convert the HTML to text and store text with store
   const text = global.convert(html);
-  const textKey = `${newID}:text`;
-  const textInfo = {url: url, text: text};
+
+  console.log('344444444 ' + html);
+
+  const textKey = `${newID}-text`;
+  const textInfo = {};
+  textInfo[url] = text;
   distribution.all.store.put(textInfo, textKey, (e, _v) => {
     if (e) return null;
   });

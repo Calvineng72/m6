@@ -47,7 +47,7 @@ beforeAll((done) => {
       });
     });
   });
-});
+}, 10000);
 
 afterAll((done) => {
   let remote = {service: 'status', method: 'stop'};

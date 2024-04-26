@@ -19,9 +19,16 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "assert": "^2.1.0",
+    "crypto": "^1.0.1",
+    "fs": "^0.0.1-security",
     "html-to-text": "^9.0.5",
+    "http": "^0.0.1-security",
     "jsdom": "^24.0.0",
+    "natural": "^7.0.5",
     "node-fetch": "^2.7.0",
+    "path": "^0.12.7",
+    "stopwords": "^0.0.9",
     "sync-fetch": "^0.5.2",
     "url": "^0.11.3",
     "yargs": "^17.7.2"

@@ -360,6 +360,8 @@ const mr = function(config) {
               // each result is {nextURL1: originalURL}
               for (result of mapReduceResults) {
                 const resultURL = Object.keys(result)[0];
+                console.log('363636363 ' + resultURL)
+                console.log('364364364 ' + result[resultURL]);
                 const key = distribution.util.id.getID(resultURL);
 
                 mapReduceResultsKeys.push(key);
@@ -381,6 +383,7 @@ const mr = function(config) {
                 distribution[context.gid].store.put(result, key, (e, v) => {
                   if (e) {
                     callback(e, null);
+                    console.log('ERRORRRRR: ' + e);
                     return;
                   }
 
@@ -392,9 +395,12 @@ const mr = function(config) {
                     // set keysToProcessNext to the keys of the next
                     // iteration of iterative MapReduce.
                     keysToProcessNext = objectArrayToKeys(mapReduceResults);
+                    console.log('395395395 ' + keysToProcessNext);
+                    console.log('3999999 ' + keysToProcessNext.length);
 
-                    if (currentIteration < maxMapReduceIterations) {
+                    if (currentIteration < maxMapReduceIterations - 1) {
                       currentIteration += 1;
+                      console.log('402402402 ' + currentIteration);
                       distributedMap();
                     } else {
                       const outputObjectArray = mapToObjectArray(allMapReduceData);
