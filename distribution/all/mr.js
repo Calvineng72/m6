@@ -51,6 +51,7 @@ const mr = function(config) {
         const results = [];
         distribution.local.store.get({gid: groupName}, (error, keysMap) => {
           if (error) {
+            console.log('THERE IS AN ERROR 1', error);
             callback(error, null);
             return;
           }
@@ -64,6 +65,7 @@ const mr = function(config) {
           }
 
           if (localKeysLength === 0) {
+            console.log('THERE IS AN ERROR 2', error);
             callback(null, []);
             return;
           }
@@ -73,13 +75,16 @@ const mr = function(config) {
               const key = {gid: groupName, key: localKey};
               distribution.local.store.get(key, (error, value) => {
                 if (error) {
+                  console.log('THERE IS AN ERROR 3', error);
                   callback(error, null);
                   return;
                 }
 
                 const [dataKey, dataValue] = Object.entries(value)[0];
                 const result = map(dataKey, dataValue);
-                results.push(result);
+                if (result !== null && result !== undefined) {
+                  results.push(result);
+                }
 
                 localKeysLength--;
                 if (localKeysLength === 0) {
@@ -92,6 +97,7 @@ const mr = function(config) {
                             resultsID,
                             (error, _value) => {
                               if (error) {
+                                console.log('THERE IS AN ERROR 4', error);
                                 callback(error, null);
                               } else {
                                 callback(null, resultsID);
@@ -100,6 +106,7 @@ const mr = function(config) {
                         );
                       })
                       .catch((error) => {
+                        console.log('THERE IS AN ERROR 5', error);
                         callback(error, null);
                       });
                 }
@@ -212,7 +219,9 @@ const mr = function(config) {
 
                 const [mapKey, mapValue] = Object.entries(value)[0];
                 const result = reduce(mapKey, mapValue);
-                results.push(result);
+                if (result !== null && result !== undefined) {
+                  results.push(result);
+                }
 
                 localKeysLength--;
                 if (localKeysLength === 0) {
@@ -355,17 +364,19 @@ const mr = function(config) {
               const mapReduceResults = retrievedResults.flat(depth = 3);
               const mapReduceResultsKeys = [];
 
-              let count = mapReduceResults.length;
+              let mapReduceLength = mapReduceResults.length;
               // Store into all-time accumulator
               // each result is {nextURL1: originalURL}
-              for (result of mapReduceResults) {
+              for (const result of mapReduceResults) {
                 const resultURL = Object.keys(result)[0];
                 const key = distribution.util.id.getID(resultURL);
 
+                console.log('MEOW 2');
                 mapReduceResultsKeys.push(key);
 
                 // if already have key in map, then append originalURL
                 // (because this URL could come from multiple places)
+                console.log('MEOW 3');
                 if (allMapReduceData.has(resultURL)) {
                   allMapReduceData.set(
                       resultURL,
@@ -376,27 +387,32 @@ const mr = function(config) {
                   allMapReduceData.set(resultURL, [result[resultURL]]);
                 }
 
+                console.log('MEOW 4');
                 // put {newURL1: originalURL} object into store under newURL1 key
                 // (which is a URL that will get cleaned up anyways through the store)
-                distribution[context.gid].store.put(result, key, (e, v) => {
+                distribution[context.gid].store.put(result, key, (e, _v) => {
                   if (e) {
                     callback(e, null);
                     return;
                   }
 
-                  count--;
-
+                  // console.log(key, result, mapReduceLength);
+                  console.log('MEOW 5');
+                  mapReduceLength--;
 
                   // commence next iteration
-                  if (count === 0) {
+                  if (mapReduceLength === 0) {
                     // set keysToProcessNext to the keys of the next
                     // iteration of iterative MapReduce.
-                    keysToProcessNext = objectArrayToKeys(mapReduceResults);
+                    // CALVIN MAKING CHANGES HERE
+                    console.log('GOT HERE UGH 2')
+                    keysToProcessNext = mapReduceResultsKeys;
 
                     if (currentIteration < maxMapReduceIterations) {
-                      currentIteration += 1;
+                      currentIteration++;
                       distributedMap();
                     } else {
+                      console.log('GOT HERE 2');
                       const outputObjectArray = mapToObjectArray(allMapReduceData);
                       callback(null, outputObjectArray);
                     }

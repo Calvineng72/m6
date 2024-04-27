@@ -8,9 +8,14 @@ let crawler = {};
 // EX. {'google.com': 'google.com/page1'}
 // Starting page ex: {'google.com': 'google.com'}
 crawler.map = (key, _value) => {
-  // 0) Variables
+  // 0) Variables and checks
   const url = key;
   const newID = distribution.util.id.getID(url);
+  console.log('URL:', url, 'NEW ID:', newID);
+
+  if (!url.startsWith('https://www.npmjs.com')) {
+    return null;
+  }
 
 
   // 1) Check if the page has already been visited
@@ -29,10 +34,16 @@ crawler.map = (key, _value) => {
     return null;
   }
 
+  
+  // 2.5) Wait for one full second
+  const delay = 1000; // in milliseconds
+  const start = Date.now();
+  while (Date.now() - start < delay) {}
+
 
   // 3) Convert the HTML to text and store text with store
   const text = global.convert(html);
-  const textKey = `${newID}:text`;
+  const textKey = `${newID}+text`;
   const textInfo = {[url]: text};
   distribution.all.store.put(textInfo, textKey, (e, _v) => {
     if (e) return null;
@@ -42,7 +53,6 @@ crawler.map = (key, _value) => {
   const dom = new global.JSDOM(html);
   const document = dom.window.document;
 
-  let out = {};
   let links = [];
   let seen = new Set();
 
@@ -82,9 +92,12 @@ crawler.map = (key, _value) => {
           fullURL = new global.URL(link.href);
         }
         seen.add(link.href);
-        links.push(fullURL.toString());
+
+        const foundURL = fullURL.toString();
+        if (foundURL.startsWith('https://www.npmjs.com')) {
+          links.push(foundURL);
+        }
       } catch (error) {
-        console.error(error);
         return null;
       }
     }
@@ -93,8 +106,7 @@ crawler.map = (key, _value) => {
 
   // 5) Return the links ({newURL: [url1, url2, ...]})
   // EX. {'google.com/page1': ['google.com/page2', 'google.com/page3']}
-  out[url] = links;
-  return out;
+  return {[url]: links};
 };
 
 crawler.reduce = (key, values) => {
@@ -111,7 +123,7 @@ crawler.reduce = (key, values) => {
 
   // 1) Store the links for reverse web link graph
   // NOTE: we need to discuss how to do this/what the format should be
-  const linksKey = `${oldID}:links`;
+  const linksKey = `${oldID}+links`;
   const linksInfo = {oldURL: oldURL, links: values};
   distribution.all.store.put(linksInfo, linksKey, (e, _v) => {
     if (e) return null;
@@ -123,9 +135,11 @@ crawler.reduce = (key, values) => {
       (value, index, array) => array.indexOf(value) === index,
   );
   for (const newURL of values) {
-    let newInfo = {};
-    newInfo[newURL] = oldURL;
-    out.push(newInfo);
+    if (newURL !== null) {
+      let newInfo = {};
+      newInfo[newURL] = oldURL;
+      out.push(newInfo);
+    }
   }
   return out;
 };

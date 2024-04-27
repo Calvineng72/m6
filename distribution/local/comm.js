@@ -29,6 +29,7 @@ comm.send = (message, remote, callback) => {
 
   req.on('error', (error) => {
     if (error) {
+      console.log('HERE IS THE ERROR', error);
       callback(new Error('There was an issue with connection!'), null);
     }
   });

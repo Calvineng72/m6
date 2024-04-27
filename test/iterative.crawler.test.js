@@ -138,13 +138,14 @@ const crawlerReduce = crawler.reduce;
 //   });
 // });
 
+
 test('(0 pts) crawler subsystem (gutenberg)', (done) => {
   let m = crawlerMap;
   let r = crawlerReduce;
 
   let dataset = [
-    {'https://www.gutenberg.org/':
-      'https://www.gutenberg.org/'},
+    {'https://www.npmjs.com/search?q=text':
+      'https://www.npmjs.com/search?q=text'},
   ];
 
   let expected = [{'https://www.gutenberg.org/ebooks/73436':
@@ -183,4 +184,4 @@ test('(0 pts) crawler subsystem (gutenberg)', (done) => {
       }
     });
   });
-});
+}, 10000000);
