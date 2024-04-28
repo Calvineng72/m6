@@ -33,7 +33,7 @@ crawler.map = (key, _value) => {
     return null;
   }
 
-  
+
   // 2.5) Wait for one full second
   const delay = 3000; // in milliseconds
   const start = Date.now();
@@ -48,7 +48,7 @@ crawler.map = (key, _value) => {
     if (e) return null;
   });
 
-  
+
   // 4) Parse the HTML for links
   const dom = new global.JSDOM(html);
   const document = dom.window.document;
@@ -56,25 +56,6 @@ crawler.map = (key, _value) => {
   let links = [];
   let seen = new Set();
 
-  // for (const link of document.links) {
-  //   if (!seen.has(link.href)) {
-  //     let fullURL = url;
-  //     if (link.href.charAt(0) == '/') {
-  //       if (url.charAt(url.length - 1) == '/') {
-  //         fullURL = new global.URL(
-  //             link.href,
-  //             url.substring(0, url.length - 1),
-  //         );
-  //       } else {
-  //         fullURL = new global.URL(link.href, url);
-  //       }
-  //     } else {
-  //       fullURL = new global.URL(link.href);
-  //     }
-  //     seen.add(link.href);
-  //     links.push(fullURL.toString());
-  //   }
-  // }
   for (const link of document.links) {
     if (!seen.has(link.href)) {
       let fullURL;
@@ -121,6 +102,7 @@ crawler.reduce = (key, values) => {
   const oldID = distribution.util.id.getID(oldURL);
   values = values.flat();
 
+
   // 1) Store the links for reverse web link graph
   // NOTE: we need to discuss how to do this/what the format should be
   const linksKey = `${oldID}+links`;
@@ -129,14 +111,15 @@ crawler.reduce = (key, values) => {
     if (e) return null;
   });
 
+
   // 2) Return the links for the next iteration
   let out = [];
+
   values = values.filter(
       (value, index, array) => array.indexOf(value) === index,
   );
+  values = values.filter((url) => url !== oldURL);
 
-  values = values.filter((word) => word != oldURL);
-  values = values.filter((word) => word.length >= 25 && word.substring(0, 25) === 'https://www.gutenberg.org');
   for (const newURL of values) {
     if (newURL !== null) {
       let newInfo = {};

@@ -71,7 +71,7 @@ afterAll((done) => {
 const query = require('../distribution/subsystems/querySubsystem');
 
 test('(0 pts) query subsystem', (done) => {
-  const url = query('What are your favorite cats?', (result) => { 
+  const url = query('What are your favorite cats?', (result) => {
     expect(result).toBeDefined();
     console.log(`The top URL is ${result}`);
     done();
