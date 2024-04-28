@@ -48,6 +48,7 @@ crawler.map = (key, _value) => {
     if (e) return null;
   });
 
+  
   // 4) Parse the HTML for links
   const dom = new global.JSDOM(html);
   const document = dom.window.document;
@@ -133,6 +134,9 @@ crawler.reduce = (key, values) => {
   values = values.filter(
       (value, index, array) => array.indexOf(value) === index,
   );
+
+  values = values.filter((word) => word != oldURL);
+  values = values.filter((word) => word.length >= 25 && word.substring(0, 25) === 'https://www.gutenberg.org');
   for (const newURL of values) {
     if (newURL !== null) {
       let newInfo = {};

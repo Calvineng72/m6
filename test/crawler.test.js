@@ -98,10 +98,12 @@ test('(0 pts) crawler subsystem', (done) => {
   let r = crawlerReduce;
 
   let dataset = [
-    {'https://www.example.com/': 'https://www.example.com/'},
+    {'https://www.gutenberg.org/':
+      'https://www.gutenberg.org/'},
   ];
 
-  let expected = [{'https://www.iana.org/domains/example': ['https://www.example.com/']}];
+  let expected = [{'https://www.gutenberg.org/ebooks/73436':
+    ['https://www.gutenberg.org/']}];
 
   /* Sanity check: map and reduce locally */
   //   sanityCheck(m, r, dataset, expected, done);

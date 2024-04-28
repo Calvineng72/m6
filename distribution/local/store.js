@@ -34,7 +34,7 @@ store.get = (key, callback) => {
       }
     } catch (err) {
       console.error(err);
-      callback(new Error('There was an error reading the directory!'), null);
+      callback(new Error('There was an error reading the directory! ' + storeDir), null);
     }
     return;
   }
@@ -47,7 +47,7 @@ store.get = (key, callback) => {
     callback(null, deserialize(data));
   } catch (err) {
     console.error(err);
-    callback(new Error('The key could not be found!'), null);
+    callback(new Error('The key could not be found! ' + fullKey), null);
   }
 };
 

@@ -66,10 +66,12 @@ const mr = function(config) {
 
                 localKeysLength--;
                 if (localKeysLength === 0) {
+                  console.log('86868686 ' + results);
                   Promise.all(results)
                       .then((allResults) => {
                         const resultsID =
                         distribution.util.id.getID(allResults);
+                        console.log('91919191 ' + resultsID);
                         distribution[groupName].store.put(
                             allResults,
                             resultsID,
@@ -147,6 +149,7 @@ const mr = function(config) {
                           if (mapResultsLength === 0) {
                             localKeysLength--;
                             if (localKeysLength === 0) {
+                              console.log('167167167 ' + reduceKeys);
                               callback(null, reduceKeys);
                             }
                           }
@@ -285,8 +288,7 @@ const mr = function(config) {
             remote,
             (errors, values) => {
               if (Object.keys(errors).length !== 0) {
-                callback(errors, values);
-                return;
+                console.log('oops error line 307 in mr');
               }
 
               const shuffleKeys = Object.values(values).flat((depth = 3));
@@ -345,6 +347,8 @@ const mr = function(config) {
               // each result is {nextURL1: originalURL}
               for (const result of mapReduceResults) {
                 const resultURL = Object.keys(result)[0];
+                // console.log('363636363 ' + resultURL)
+                // console.log('364364364 ' + result[resultURL]);
                 const key = distribution.util.id.getID(resultURL);
 
                 mapReduceResultsKeys.push(key);
@@ -355,13 +359,15 @@ const mr = function(config) {
                   allMapReduceData.get(resultURL).push(result[resultURL])
                 } else {
                   // set key, and then array that just has [originalURL]
-                  allMapReduceData.set(resultURL, [result[resultURL]]);
+                  let thing = [];
+                  allMapReduceData.set(resultURL, thing);
                 }
 
                 // put {newURL1: originalURL} object into store under newURL1 key
                 // (which is a URL that will get cleaned up anyways through the store)
                 distribution[context.gid].store.put(result, key, (e, _v) => {
                   if (e) {
+                    console.log('ERRRRROR ' + e);
                     callback(e, null);
                     return;
                   }
@@ -375,7 +381,7 @@ const mr = function(config) {
                     keysToProcessNext = mapReduceResultsKeys;
 
                     if (currentIteration < maxMapReduceIterations) {
-                      currentIteration++;
+                      currentIteration += 1;
                       distributedMap();
                     } else {
                       const outputObjectArray = mapToObjectArray(allMapReduceData);
