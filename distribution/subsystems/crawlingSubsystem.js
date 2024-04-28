@@ -11,7 +11,6 @@ crawler.map = (key, _value) => {
   // 0) Variables and checks
   const url = key;
   const newID = distribution.util.id.getID(url);
-  console.log('URL:', url, 'NEW ID:', newID);
 
   if (!url.startsWith('https://www.npmjs.com')) {
     return null;
@@ -36,7 +35,7 @@ crawler.map = (key, _value) => {
 
   
   // 2.5) Wait for one full second
-  const delay = 1000; // in milliseconds
+  const delay = 3000; // in milliseconds
   const start = Date.now();
   while (Date.now() - start < delay) {}
 

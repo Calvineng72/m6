@@ -2,25 +2,6 @@ const mr = function(config) {
   let context = {};
   context.gid = config.gid || 'all';
 
-  function objectArrayToKeys(objectArray) {
-    // Given an array of objects like
-    // [{originalURL1: [nextURL1]}, {originalURL2: [nextURL2, nextURL3], ...}]
-    // extract all values of objects resulting in
-    // [nextURL1, nextURL2, nextURL3, ...]
-    const keys = [];
-
-    for (const object of objectArray) {
-      const key = distribution.util.id.getID(Object.keys(object)[0]);
-      keys.push(key);
-    }
-
-    const uniqueKeys = keys.filter(
-        (value, index, array) => array.indexOf(value) === index,
-    );
-
-    return uniqueKeys;
-  }
-
   function mapToObjectArray(map) {
     // Converts JS map into an array of Objects like
     // [{originalURL1: [nextURL1]}, {originalURL2: [nextURL2, nextURL3], ...}]
@@ -51,7 +32,6 @@ const mr = function(config) {
         const results = [];
         distribution.local.store.get({gid: groupName}, (error, keysMap) => {
           if (error) {
-            console.log('THERE IS AN ERROR 1', error);
             callback(error, null);
             return;
           }
@@ -65,7 +45,6 @@ const mr = function(config) {
           }
 
           if (localKeysLength === 0) {
-            console.log('THERE IS AN ERROR 2', error);
             callback(null, []);
             return;
           }
@@ -75,7 +54,6 @@ const mr = function(config) {
               const key = {gid: groupName, key: localKey};
               distribution.local.store.get(key, (error, value) => {
                 if (error) {
-                  console.log('THERE IS AN ERROR 3', error);
                   callback(error, null);
                   return;
                 }
@@ -97,7 +75,6 @@ const mr = function(config) {
                             resultsID,
                             (error, _value) => {
                               if (error) {
-                                console.log('THERE IS AN ERROR 4', error);
                                 callback(error, null);
                               } else {
                                 callback(null, resultsID);
@@ -106,7 +83,6 @@ const mr = function(config) {
                         );
                       })
                       .catch((error) => {
-                        console.log('THERE IS AN ERROR 5', error);
                         callback(error, null);
                       });
                 }
@@ -390,7 +366,6 @@ const mr = function(config) {
                     return;
                   }
 
-                  // console.log(key, result, mapReduceLength);
                   mapReduceLength--;
 
                   // commence next iteration
