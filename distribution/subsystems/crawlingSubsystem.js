@@ -12,7 +12,7 @@ crawler.map = (key, _value) => {
   const url = key;
   const newID = distribution.util.id.getID(url);
 
-  console.log('15555555 ' + url);
+  // console.log('15555555 ' + url);
 
 
   // 1) Check if the page has already been visited
@@ -34,7 +34,7 @@ crawler.map = (key, _value) => {
   // 3) Convert the HTML to text and store text with store
   const text = global.convert(html);
 
-  console.log('344444444 ' + html);
+  // console.log('344444444 ' + html);
 
   const textKey = `${newID}-text`;
   const textInfo = {};
@@ -116,7 +116,7 @@ crawler.reduce = (key, values) => {
 
   // 1) Store the links for reverse web link graph
   // NOTE: we need to discuss how to do this/what the format should be
-  const linksKey = `${oldID}:links`;
+  const linksKey = `${oldID}-links`;
   const linksInfo = {oldURL: oldURL, links: values};
   distribution.all.store.put(linksInfo, linksKey, (e, _v) => {
     if (e) return null;
@@ -127,6 +127,9 @@ crawler.reduce = (key, values) => {
   values = values.filter(
       (value, index, array) => array.indexOf(value) === index,
   );
+
+  values = values.filter((word) => word != oldURL);
+  values = values.filter((word) => word.length >= 25 && word.substring(0, 25) === 'https://www.gutenberg.org');
   for (const newURL of values) {
     let newInfo = {};
     newInfo[newURL] = oldURL;

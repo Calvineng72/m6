@@ -83,10 +83,12 @@ const mr = function(config) {
 
                 localKeysLength--;
                 if (localKeysLength === 0) {
+                  console.log('86868686 ' + results);
                   Promise.all(results)
                       .then((allResults) => {
                         const resultsID =
                         distribution.util.id.getID(allResults);
+                        console.log('91919191 ' + resultsID);
                         distribution[groupName].store.put(
                             allResults,
                             resultsID,
@@ -164,6 +166,7 @@ const mr = function(config) {
                           if (mapResultsLength === 0) {
                             localKeysLength--;
                             if (localKeysLength === 0) {
+                              console.log('167167167 ' + reduceKeys);
                               callback(null, reduceKeys);
                             }
                           }
@@ -300,8 +303,7 @@ const mr = function(config) {
             remote,
             (errors, values) => {
               if (Object.keys(errors).length !== 0) {
-                callback(errors, values);
-                return;
+                console.log('oops error line 307 in mr');
               }
 
               const shuffleKeys = Object.values(values).flat((depth = 3));
@@ -360,8 +362,8 @@ const mr = function(config) {
               // each result is {nextURL1: originalURL}
               for (result of mapReduceResults) {
                 const resultURL = Object.keys(result)[0];
-                console.log('363636363 ' + resultURL)
-                console.log('364364364 ' + result[resultURL]);
+                // console.log('363636363 ' + resultURL)
+                // console.log('364364364 ' + result[resultURL]);
                 const key = distribution.util.id.getID(resultURL);
 
                 mapReduceResultsKeys.push(key);
@@ -369,21 +371,19 @@ const mr = function(config) {
                 // if already have key in map, then append originalURL
                 // (because this URL could come from multiple places)
                 if (allMapReduceData.has(resultURL)) {
-                  allMapReduceData.set(
-                      resultURL,
-                      allMapReduceData.get(resultURL).push(result[resultURL]),
-                  );
+                  allMapReduceData.get(resultURL).push(result[resultURL])
                 } else {
                   // set key, and then array that just has [originalURL]
-                  allMapReduceData.set(resultURL, [result[resultURL]]);
+                  let thing = [];
+                  allMapReduceData.set(resultURL, thing);
                 }
 
                 // put {newURL1: originalURL} object into store under newURL1 key
                 // (which is a URL that will get cleaned up anyways through the store)
                 distribution[context.gid].store.put(result, key, (e, v) => {
                   if (e) {
+                    console.log('ERRRRROR ' + e);
                     callback(e, null);
-                    console.log('ERRORRRRR: ' + e);
                     return;
                   }
 
@@ -395,12 +395,11 @@ const mr = function(config) {
                     // set keysToProcessNext to the keys of the next
                     // iteration of iterative MapReduce.
                     keysToProcessNext = objectArrayToKeys(mapReduceResults);
-                    console.log('395395395 ' + keysToProcessNext);
-                    console.log('3999999 ' + keysToProcessNext.length);
+                    console.log('number of keys to process next: ' + keysToProcessNext.length);
 
                     if (currentIteration < maxMapReduceIterations - 1) {
                       currentIteration += 1;
-                      console.log('402402402 ' + currentIteration);
+                      console.log('current iteration: ' + currentIteration);
                       distributedMap();
                     } else {
                       const outputObjectArray = mapToObjectArray(allMapReduceData);
