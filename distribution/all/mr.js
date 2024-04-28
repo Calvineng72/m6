@@ -371,23 +371,17 @@ const mr = function(config) {
                 const resultURL = Object.keys(result)[0];
                 const key = distribution.util.id.getID(resultURL);
 
-                console.log('MEOW 2');
                 mapReduceResultsKeys.push(key);
 
                 // if already have key in map, then append originalURL
                 // (because this URL could come from multiple places)
-                console.log('MEOW 3');
                 if (allMapReduceData.has(resultURL)) {
-                  allMapReduceData.set(
-                      resultURL,
-                      allMapReduceData.get(resultURL).push(result[resultURL]),
-                  );
+                  allMapReduceData.get(resultURL).push(result[resultURL])
                 } else {
                   // set key, and then array that just has [originalURL]
                   allMapReduceData.set(resultURL, [result[resultURL]]);
                 }
 
-                console.log('MEOW 4');
                 // put {newURL1: originalURL} object into store under newURL1 key
                 // (which is a URL that will get cleaned up anyways through the store)
                 distribution[context.gid].store.put(result, key, (e, _v) => {
@@ -397,22 +391,18 @@ const mr = function(config) {
                   }
 
                   // console.log(key, result, mapReduceLength);
-                  console.log('MEOW 5');
                   mapReduceLength--;
 
                   // commence next iteration
                   if (mapReduceLength === 0) {
                     // set keysToProcessNext to the keys of the next
                     // iteration of iterative MapReduce.
-                    // CALVIN MAKING CHANGES HERE
-                    console.log('GOT HERE UGH 2')
                     keysToProcessNext = mapReduceResultsKeys;
 
                     if (currentIteration < maxMapReduceIterations) {
                       currentIteration++;
                       distributedMap();
                     } else {
-                      console.log('GOT HERE 2');
                       const outputObjectArray = mapToObjectArray(allMapReduceData);
                       callback(null, outputObjectArray);
                     }
