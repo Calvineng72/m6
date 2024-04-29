@@ -1,0 +1,19 @@
+.Results {
+  height: 60vh;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(47, 12, 218, 0.7) transparent;
+}
+
+.Results::-webkit-scrollbar {
+  width: 8px;
+}
+
+.Results::-webkit-scrollbar-thumb {
+  background-color: rgba(155, 155, 155, 0.7);
+  border-radius: 4px;
+}
+
+.Results::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(125, 125, 125, 0.7);
+}
