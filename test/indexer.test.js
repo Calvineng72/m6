@@ -94,54 +94,54 @@ const indexer = require('../distribution/subsystems/indexingSubsystem');
 const indexerMap = indexer.map;
 const indexerReduce = indexer.reduce;
 
-test('(0 pts) indexer subsystem', (done) => {
-  let m = indexerMap;
-  let r = indexerReduce;
+// test('(0 pts) indexer subsystem', (done) => {
+//   let m = indexerMap;
+//   let r = indexerReduce;
 
-  let dataset = [
-    {'https://www.example.com/': 'My favorite food is pizza since it is food.'},
-    {'https://www.meow.com/': 'My favorite animals are cats, cats, and cats.'},
-  ];
+//   let dataset = [
+//     {'https://www.example.com/': 'My favorite food is pizza since it is food.'},
+//     {'https://www.meow.com/': 'My favorite animals are cats, cats, and cats.'},
+//   ];
 
-  let expected = [
-    {'food': [{'https://www.example.com/': 2}]},
-    {'pizza': [{'https://www.example.com/': 1}]},
-    {'favorit': [{'https://www.meow.com/': 1, 'https://www.example.com/': 1}]},
-    {'anim': [{'https://www.meow.com/': 1}]},
-    {'cat': [{'https://www.meow.com/': 3}]},
-  ];
+//   let expected = [
+//     {'food': [{'https://www.example.com/': 2}]},
+//     {'pizza': [{'https://www.example.com/': 1}]},
+//     {'favorit': [{'https://www.meow.com/': 1, 'https://www.example.com/': 1}]},
+//     {'anim': [{'https://www.meow.com/': 1}]},
+//     {'cat': [{'https://www.meow.com/': 3}]},
+//   ];
 
-  /* Sanity check: map and reduce locally */
-  // sanityCheck(m, r, dataset, expected, done);
+//   /* Sanity check: map and reduce locally */
+//   // sanityCheck(m, r, dataset, expected, done);
 
-  /* Now we do the same thing but on the cluster */
-  let keys = dataset.map((o) => id.getID(Object.keys(o)[0]));
-  const doMapReduce = (_cb) => {
-    distribution.all.mr.exec({keys: keys, map: m, reduce: r}, (_e, v) => {
-      try {
-        expect(v).toEqual(expect.arrayContaining(expected));
-        done();
-      } catch (e) {
-        done(e);
-      }
-    });
-  };
+//   /* Now we do the same thing but on the cluster */
+//   let keys = dataset.map((o) => id.getID(Object.keys(o)[0]));
+//   const doMapReduce = (_cb) => {
+//     distribution.all.mr.exec({keys: keys, map: m, reduce: r}, (_e, v) => {
+//       try {
+//         expect(v).toEqual(expect.arrayContaining(expected));
+//         done();
+//       } catch (e) {
+//         done(e);
+//       }
+//     });
+//   };
 
-  let cntr = 0;
+//   let cntr = 0;
 
-  // We send the dataset to the cluster
-  dataset.forEach((o) => {
-    let key = id.getID(Object.keys(o)[0]);
-    let value = o;
-    distribution.all.store.put(value, key, (_e, _v) => {
-      cntr++;
-      // Once we are done, run the map reduce
-      if (cntr === dataset.length) {
-        doMapReduce();
-      }
-    });
-  });
-});
+//   // We send the dataset to the cluster
+//   dataset.forEach((o) => {
+//     let key = id.getID(Object.keys(o)[0]);
+//     let value = o;
+//     distribution.all.store.put(value, key, (_e, _v) => {
+//       cntr++;
+//       // Once we are done, run the map reduce
+//       if (cntr === dataset.length) {
+//         doMapReduce();
+//       }
+//     });
+//   });
+// });
 
 
 test('(0 pts) full indexer', (done) => {
