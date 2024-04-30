@@ -128,25 +128,43 @@ const mr = function(config) {
                 const mapResults = Object.values(value).flat((depth = 3));
                 console.log('[LOG] mapResults Length at shuffle phase:'
                     , mapResults.length);
-                let mapResultsLength = mapResults.length;
+                // let mapResultsLength = mapResults.length;
+
+                let appendObjects = {};
+
                 for (const mapResult of mapResults) {
                   const [key, value] = Object.entries(mapResult)[0];
                   const map = {[key]: value};
+                  // console.log('[LOG] mapResult at shuffle phase:', map);
 
                   const keyID = distribution.util.id.getID(key);
                   if (!reduceKeys.includes(keyID)) {
                     reduceKeys.push(keyID);
                   }
 
-                  distribution[groupName].store.append(
-                      map,
-                      keyID,
+                  if (appendObjects[keyID] === undefined) {
+                    appendObjects[keyID] = [];
+                  }
+                  appendObjects[keyID].push(map);
+                };
+
+                let appendResultsLength = Object.keys(appendObjects).length;
+                console.log('[LOG] appendResultsLength at shuffle phase: ',
+                    appendResultsLength);
+
+                for (const [key, values] of Object.entries(appendObjects)) {
+                  console.log("sending append with key: ", key);
+                  console.log("the values: ", values);
+
+                  distribution[groupName].store.multiAppend(
+                      values,
+                      key,
                       (error, _value) => {
                         if (error) {
                           callback(error, null);
                         } else {
-                          mapResultsLength--;
-                          if (mapResultsLength === 0) {
+                          appendResultsLength--;
+                          if (appendResultsLength === 0) {
                             localKeysLength--;
                             if (localKeysLength === 0) {
                               callback(null, reduceKeys);
