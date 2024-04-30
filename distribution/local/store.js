@@ -136,4 +136,48 @@ store.append = (value, key, callback) => {
   });
 };
 
+store.multiAppend = (values, key, callback) => {
+  callback = callback || function() {};
+  let mapKeys = [];
+  let mapValues = [];
+
+  for (let i = 0; i < values.length; i++) {
+    let k = Object.keys(values[i])[0];
+    let v = Object.values(values[i])[0];
+    mapKeys.push(k);
+    mapValues.push(v);
+  }
+
+  distribution.local.store.get((key), (err, data) => {
+    // console.log("Mapkeys: ", mapKeys);
+    // console.log("Mapvalues: ", mapValues);
+    if (!err) {
+      mapKeys.forEach((k, i) => {
+        try {
+          data[k].push(mapValues[i]);
+        } catch (err) {
+          data[k] = [mapValues[i]];
+        }
+      });
+    } else {
+      data = {};
+      mapKeys.forEach((k, i) => {
+        try {
+          data[k].push(mapValues[i]);
+        } catch (err) {
+          data[k] = [mapValues[i]];
+        }
+      });
+    }
+
+    distribution.local.store.put(data, key, (err, value) => {
+      if (err) {
+        callback(err, null);
+        return;
+      }
+      callback(null, value);
+    });
+  });
+};
+
 module.exports = store;

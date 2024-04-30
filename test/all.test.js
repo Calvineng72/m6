@@ -847,6 +847,43 @@ test('(0.5 pts) all.store.put(no key)', (done) => {
 });
 
 
+test('(0.5 pts) all.store.multiAppend(data)', (done) => {
+  const init = {'first': ['first'], 'last': ['last']};
+  const user = [{['first']: 'Josiah'}, {['last']: 'Carberry'}];
+
+  distribution.mygroup.store.put(init, 'initkey', (e, v) => {
+    console.log(e);
+    console.log(v);
+    distribution.mygroup.store.multiAppend(user, 'initkey', (e, v) => {
+      if (e) {
+        fail(e);
+      }
+      let multiOutput = v;
+      distribution.mygroup.store.put(init, 'otherkey', (e, v) => {
+        if (e) {
+          fail(e);
+        }
+        distribution.mygroup.store.append(user[0], 'otherkey', (e, v) => {
+          if (e) {
+            fail(e);
+          }
+          distribution.mygroup.store.append(user[1], 'otherkey', (e, v) => {
+            if (e) {
+              fail(e);
+            }
+            console.log("874");
+            console.log(v);
+            console.log(multiOutput);
+            expect(multiOutput).toEqual(v);
+            done();
+          });
+        });
+      });
+    });
+  });
+});
+
+
 // // ---reconf / correct object placement---
 
 test(

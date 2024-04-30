@@ -126,6 +126,8 @@ const mr = function(config) {
                 }
 
                 const mapResults = Object.values(value).flat((depth = 3));
+                console.log('[LOG] mapResults Length at shuffle phase:'
+                    , mapResults.length);
                 let mapResultsLength = mapResults.length;
                 for (const mapResult of mapResults) {
                   const [key, value] = Object.entries(mapResult)[0];

@@ -226,6 +226,43 @@ let store = (config) => {
         }
       });
     },
+    multiAppend: (values, key, callback) => {
+      callback = callback || function() {};
+      key = !key ? id.getID(values) : key;
+
+      if (!values) {
+        callback(Error('The values are missing!'), null);
+        return;
+      }
+
+      distribution.local.groups.get(context.gid, (err, val) => {
+        if (err) {
+          callback(Error('The group\'s nodes cannot be retrieved!'), null);
+        } else {
+          const allNodes = Object.values(val);
+          const nids = allNodes.map((node) => {
+            return id.getNID(node);
+          });
+
+          const nid = context.hash(id.getID(key), nids);
+          const node = allNodes.find((node) => id.getNID(node) === nid);
+
+          const remote = {
+            service: 'store',
+            method: 'multiAppend',
+            node: node,
+          };
+          const message = [values, {gid: context.gid, key: key}];
+          distribution.local.comm.send(message, remote, (e, v) => {
+            if (e) {
+              callback(e, null);
+            } else {
+              callback(null, v);
+            }
+          });
+        }
+      });
+    },
   };
 };
 

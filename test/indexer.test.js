@@ -1,4 +1,4 @@
-global.nodeConfig = {ip: '127.0.0.1', port: 2000};
+global.nodeConfig = {ip: '127.0.0.1', port: 3000};
 const distribution = require('../distribution');
 const id = distribution.util.id;
 
@@ -17,9 +17,9 @@ let localServer = null;
     The local node will be the orchestrator.
 */
 
-const n1 = {ip: '127.0.0.1', port: 2001};
-const n2 = {ip: '127.0.0.1', port: 2002};
-const n3 = {ip: '127.0.0.1', port: 2003};
+const n1 = {ip: '127.0.0.1', port: 3001};
+const n2 = {ip: '127.0.0.1', port: 3002};
+const n3 = {ip: '127.0.0.1', port: 3003};
 
 beforeAll((done) => {
   /* Stop the nodes if they are running */
@@ -142,3 +142,27 @@ test('(0 pts) indexer subsystem', (done) => {
     });
   });
 });
+
+
+test('(0 pts) full indexer', (done) => {
+  distribution.all.store.get(null, (err, values) => {
+    if (err.length > 0) {
+      console.log(err);
+      return res.status(500).send({'error': err});
+    }
+
+    let textKeys = values.filter((val) => val.endsWith('text'));
+    console.log('[LOG] length of textKeys:', textKeys.length);
+
+    distribution.all.mr.exec({keys: textKeys, map: indexerMap,
+      reduce: indexerReduce}, (err, values) => {
+      if (err.length > 0) {
+        console.log(err);
+        return res.status(500).send({'error': err});
+      }
+
+      res.send({'response': values});
+    });
+  });
+}, 20000);
+
