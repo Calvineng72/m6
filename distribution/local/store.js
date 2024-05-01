@@ -181,6 +181,7 @@ store.multiAppend = (values, key, callback) => {
 };
 
 store.batchOperation = (op, params, callback) => {
+  console.log("BEGIN LOCAL BATCH OPERATION HELLO");
   // params should be an array of params to apply directly
   callback = callback || function() {};
 

@@ -296,16 +296,16 @@ let store = (config) => {
               node: allNodes.find((node) => id.getNID(node) === nids[i]),
             };
             const message = [op, separateParams[nids[i]]];
-          console.log('in batch opeartion! 2');
             distribution.local.comm.send(message, remote, (e, v) => {
               if (e) {
                 console.log('ERROR IN ALL.BATCHOPERATION: ', e);
                 callback(e, null);
-              }
-              count--;
-              if (count === 0) {
-                console.log('SUCCESS IN ALL.BATCHOPERATION');
-                callback(null, v);
+              } else {
+                count--;
+                if (count === 0) {
+                  console.log('SUCCESS IN ALL.BATCHOPERATION');
+                  callback(null, v);
+                }
               }
             });
           }
