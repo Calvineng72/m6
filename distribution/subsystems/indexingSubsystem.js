@@ -3,6 +3,7 @@ let indexer = {};
 indexer.map = (key, value) => {
   // 1) Clean the text
   value = value.replace(/[^a-zA-Z ]/g, '').toLowerCase();
+  value = value.replace(/\s+/g, ' ');
 
   // 2) Tokenize the text
   let words = value.split(/(\s+)/).filter((e) => e !== ' ');
@@ -23,10 +24,23 @@ indexer.map = (key, value) => {
     };
   };
 
-  // 6) return {[ngram]: {count: 1, url: key}}
-  output = ngrams.map((ngram) => ({[ngram]: {count: 1, url: key}}));
+  let out = [];
+  let c = ngrams.reduce(function(value, value2) {
+    return (
+        value[value2] ? ++value[value2] :(value[value2] = 1),
+      value
+    );
+  }, {});
+  Object.keys(c).forEach((k, _) => {
+    let o = {[k]: {count: c[k], url: key}};
+    out.push(o);
+  });
+  return out;
 
-  return output;
+  // // 6) return {[ngram]: {count: 1, url: key}}
+  // output = ngrams.map((ngram) => ({[ngram]: {count: 1, url: key}}));
+
+  // return output;
 };
 
 // Input: {word: [{'url': url1, 'count': count1}, ...]}

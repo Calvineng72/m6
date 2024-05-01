@@ -152,28 +152,17 @@ const mr = function(config) {
                 console.log('[LOG] appendResultsLength at shuffle phase: ',
                     appendResultsLength);
 
+                let batchKeys = [];
+                let batchParams = [];
                 for (const [key, values] of Object.entries(appendObjects)) {
-                  console.log("sending append with key: ", key);
-                  console.log("the values: ", values);
-
-                  distribution[groupName].store.multiAppend(
-                      values,
-                      key,
-                      (error, _value) => {
-                        if (error) {
-                          callback(error, null);
-                        } else {
-                          appendResultsLength--;
-                          if (appendResultsLength === 0) {
-                            localKeysLength--;
-                            if (localKeysLength === 0) {
-                              callback(null, reduceKeys);
-                            }
-                          }
-                        }
-                      },
-                  );
+                  batchKeys.push(key);
+                  batchParams.push([values, key]);
                 }
+
+                console.log('[LOG] sending batchOperation at shuffle phase: ',
+                    appendResultsLength);
+                distribution[groupName].store.batchOperation('multiAppend',
+                    batchKeys, batchParams, callback);
               });
             }
           }

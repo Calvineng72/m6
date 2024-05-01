@@ -180,4 +180,26 @@ store.multiAppend = (values, key, callback) => {
   });
 };
 
+store.batchOperation = (op, params, callback) => {
+  // params should be an array of params to apply directly
+  callback = callback || function() {};
+
+  let cntr = params.length;
+  let values = [];
+
+  params.forEach((param) => {
+    distribution.local.store[op](...param, (err, value) => {
+      if (err) {
+        callback(err, null);
+        return;
+      }
+      cntr--;
+      values.push(value);
+      if (cntr === 0) {
+        callback(null, values);
+      }
+    });
+  });
+};
+
 module.exports = store;
