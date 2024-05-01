@@ -288,7 +288,7 @@ let store = (config) => {
           let count = nids.length;
 
           for (let i = 0; i < nids.length; i++) {
-            console.log('[LOG] sending BATCHOP of length: ', separateParams[nids[i]].length);
+            console.log(`[LOG] sending BATCHOP to NODE ${nids[i]} of length: `, separateParams[nids[i]].length);
 
             const remote = {
               service: 'store',
@@ -296,18 +296,23 @@ let store = (config) => {
               node: allNodes.find((node) => id.getNID(node) === nids[i]),
             };
             const message = [op, separateParams[nids[i]]];
-            distribution.local.comm.send(message, remote, (e, v) => {
-              if (e) {
-                console.log('ERROR IN ALL.BATCHOPERATION: ', e);
-                callback(e, null);
-              } else {
-                count--;
-                if (count === 0) {
-                  console.log('SUCCESS IN ALL.BATCHOPERATION');
-                  callback(null, v);
+            let sender = () => {
+              distribution.local.comm.send(message, remote, (e, v) => {
+                if (e) {
+                  console.log(`ERROR IN ALL.BATCHOPERATION | NODE ${nids[i]}: `, e);
+                  console.log('RETRYING...');
+                  sender();
+                } else {
+                  count--;
+                  if (count === 0) {
+                    console.log('SUCCESS IN ALL.BATCHOPERATION');
+                    callback(null, v);
+                  }
                 }
-              }
-            });
+              });
+            };
+
+            sender();
           }
         }
       });

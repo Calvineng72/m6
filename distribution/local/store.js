@@ -181,7 +181,7 @@ store.multiAppend = (values, key, callback) => {
 };
 
 store.batchOperation = (op, params, callback) => {
-  console.log("BEGIN LOCAL BATCH OPERATION HELLO");
+  console.log("BEGIN LOCAL BATCH OPERATION on NODE ", id.getNID(global.nodeConfig));
   // params should be an array of params to apply directly
   callback = callback || function() {};
 
@@ -193,11 +193,13 @@ store.batchOperation = (op, params, callback) => {
       if (err) {
         callback(err, null);
         return;
-      }
-      cntr--;
-      values.push(value);
-      if (cntr === 0) {
-        callback(null, values);
+      } else {
+        cntr--;
+        values.push(value);
+        if (cntr === 0) {
+          console.log("FINISH LOCAL BATCH OPERATION on NODE ", id.getNID(global.nodeConfig));
+          callback(null, values);
+        }
       }
     });
   });
