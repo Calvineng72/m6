@@ -1,3 +1,5 @@
+const serialization = require('../util/serialization');
+
 function query(search, callback) {
   // 1) Clean the serach
   search = search.replace(/[^a-zA-Z ]/g, '').toLowerCase();
@@ -18,24 +20,23 @@ function query(search, callback) {
   for (const word of words) {
     const wordID = distribution.util.id.getID(word);
     distribution.all.store.get(wordID, (error, value) => {
-      if (error) {
-        console.log('ERROR IN GETTING WORD ' + error);
-      } else {
-        if (!error) {
-          const results = value[word];
-          for (const [url, count] of Object.entries(results)) {
-            if (counts[url]) {
-              counts[url] += count;
-            } else {
-              counts[url] = count;
-            }
+      length--;
+      if (!error) {
+        const results = value[word];
+        console.log(serialization.serialize(results));
+        for (let i = 0; i < results.length; i++) {
+          let url = results[i]['url'];
+          let count = results[i]['count'];
+          if (counts[url]) {
+            counts[url] += count;
+          } else {
+            counts[url] = count;
           }
         }
+      }
 
-        length--;
-        if (length === 0) {
-          returnResults();
-        }
+      if (length === 0) {
+        returnResults();
       }
     });
   }
@@ -43,9 +44,11 @@ function query(search, callback) {
   // 4) Return the results (URL with most counts)
   function returnResults() {
     let t = [];
-    for (const [_, obj] of Object.entries(counts)) {
-      t.push([obj['count'], obj['url']]);
+    for (var prop in counts) {
+      t.push([counts[prop], prop]);
     }
+
+    console.log(t);
 
     t = t.sort(function(a, b) {
       return b[0] - a[0];

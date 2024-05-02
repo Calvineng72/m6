@@ -72,7 +72,7 @@ const query = require('../distribution/subsystems/querySubsystem');
 
 test('(0 pts) query subsystem', (done) => {
   console.time('query');
-  const url = query('fetch', (result) => {
+  const url = query('serialize', (result) => {
     expect(result).toBeDefined();
     console.timeLog('query');
     console.log(`The top URLs are: ${result}`);
