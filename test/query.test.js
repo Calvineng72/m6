@@ -17,9 +17,9 @@ let localServer = null;
     The local node will be the orchestrator.
 */
 
-const n1 = {ip: '127.0.0.1', port: 2001};
-const n2 = {ip: '127.0.0.1', port: 2002};
-const n3 = {ip: '127.0.0.1', port: 2003};
+const n1 = {ip: '127.0.0.1', port: 3001};
+const n2 = {ip: '127.0.0.1', port: 3002};
+const n3 = {ip: '127.0.0.1', port: 3003};
 
 beforeAll((done) => {
   /* Stop the nodes if they are running */
@@ -71,9 +71,11 @@ afterAll((done) => {
 const query = require('../distribution/subsystems/querySubsystem');
 
 test('(0 pts) query subsystem', (done) => {
-  const url = query('What are your favorite cats?', (result) => {
+  console.time('query');
+  const url = query('fetch', (result) => {
     expect(result).toBeDefined();
-    console.log(`The top URL is ${result}`);
+    console.timeLog('query');
+    console.log(`The top URLs are: ${result}`);
     done();
   });
 });
