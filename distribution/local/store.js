@@ -189,6 +189,10 @@ store.batchOperation = (op, params, callback) => {
   let values = [];
 
   params.forEach((param) => {
+    if (!Array.isArray(param)) {
+      param = [param];
+    }
+
     distribution.local.store[op](...param, (err, value) => {
       if (err) {
         callback(err, null);
