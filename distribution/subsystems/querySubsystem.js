@@ -1,5 +1,3 @@
-const serialization = require('../util/serialization');
-
 function query(search, callback) {
   // 1) Clean the serach
   search = search.replace(/[^a-zA-Z ]/g, '').toLowerCase();
@@ -23,7 +21,6 @@ function query(search, callback) {
       length--;
       if (!error) {
         const results = value[word];
-        console.log(serialization.serialize(results));
         for (let i = 0; i < results.length; i++) {
           let url = results[i]['url'];
           let count = results[i]['count'];
@@ -47,8 +44,6 @@ function query(search, callback) {
     for (var prop in counts) {
       t.push([counts[prop], prop]);
     }
-
-    console.log(t);
 
     t = t.sort(function(a, b) {
       return b[0] - a[0];
