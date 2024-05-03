@@ -15,23 +15,6 @@ indexer.map = (key, value) => {
   let stemmer = global.natural.PorterStemmer;
   words = words.map((word) => stemmer.stem(word));
 
-  //   // 5) Generate bigrams and trigrams
-  //   const ngrams = [...words];
-
-  //   for (let n = 2; n <= 3; n++) {
-  //     for (let i = 0; i <= words.length - n; i++) {
-  //       ngrams.push(words.slice(i, i + n).join(' '));
-  //     };
-  //   };
-
-  //   // 6) return {[ngram]: {count: 1, url: key}}
-  //   output = ngrams.map((ngram) => ({[ngram]: {count: 1, url: key}}));
-
-  //   return output;
-  // };
-  // 5) Create the index
-
-  console.log('33333');
 
   let out = [];
 
@@ -42,7 +25,6 @@ indexer.map = (key, value) => {
     );
   }, {});
 
-  console.log('404040' + c);
 
   Object.keys(c).forEach((k, _) => {
     let o = {[k]: {count: c[k], url: key}};

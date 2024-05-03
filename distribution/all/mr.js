@@ -128,14 +128,12 @@ const mr = function(config) {
                 const mapResults = Object.values(value).flat((depth = 3));
                 console.log('[LOG] mapResults Length at shuffle phase:'
                     , mapResults.length);
-                // let mapResultsLength = mapResults.length;
-
+                              
                 let appendObjects = {};
 
                 for (const mapResult of mapResults) {
                   const [key, value] = Object.entries(mapResult)[0];
                   const map = {[key]: value};
-                  // console.log('[LOG] mapResult at shuffle phase:', map);
 
                   const keyID = distribution.util.id.getID(key);
                   if (!reduceKeys.includes(keyID)) {
@@ -251,11 +249,6 @@ const mr = function(config) {
 
       // 1) Send MapReduce service to each node
       function startMapReduce() {
-        // console.log(`[LOG] currentIteration number: ${currentIteration}`);
-        // console.log(`[LOG] allMapReduceData at iteration:
-        // ${currentIteration}`, allMapReduceData)
-        // console.log(`[LOG] keysToProcessNext at iteration:
-        // ${currentIteration}`, keysToProcessNext)
         distribution[context.gid].routes.put(
             service,
             serviceName,
@@ -320,9 +313,6 @@ const mr = function(config) {
             message,
             remote,
             (errors, values) => {
-              console.log('reducht4iuwehd21c90n3u1209312');
-              console.log('errors', errors);
-              console.log('values', values);
               if (Object.keys(errors).length !== 0) {
                 callback(errors, values);
                 return;
@@ -351,7 +341,6 @@ const mr = function(config) {
 
             reduceResultsLength--;
             if (reduceResultsLength === 0) {
-              // ALYSSA'S ATTEMPT AT CODING THIS ONLY THRU LOGIC NO TESTING STARTS HERE :O
               // mapReduceResults has the structure
               //  [{nextURL1: originalURL},
               // {nextURL2: originalURL}, ...]

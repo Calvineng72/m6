@@ -139,17 +139,22 @@ const crawlerReduce = crawler.reduce;
 // });
 
 
-test('(0 pts) crawler subsystem (gutenberg)', (done) => {
+test('(0 pts) crawler subsystem (npm)', (done) => {
   let m = crawlerMap;
   let r = crawlerReduce;
 
   let dataset = [
-    {'https://www.npmjs.com/search?q=text':
+    {'https://www.npmjs.com/package/fetch':
+      'https://www.npmjs.com/search?q=text'},
+      {'https://www.npmjs.com/package/diff':
+      'https://www.npmjs.com/search?q=text'},
+      {'https://www.npmjs.com/package/promise':
+      'https://www.npmjs.com/search?q=text'},
+      {'https://www.npmjs.com/package/wordwrap':
+      'https://www.npmjs.com/search?q=text'},
+      {'https://www.npmjs.com/package/retext':
       'https://www.npmjs.com/search?q=text'},
   ];
-
-  let expected = [{'https://www.gutenberg.org/ebooks/73436':
-    ['https://www.gutenberg.org/']}];
 
   /* Sanity check: map and reduce locally */
   // sanityCheck(m, r, dataset, expected, done);

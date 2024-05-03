@@ -104,7 +104,6 @@ crawler.reduce = (key, values) => {
 
 
   // 1) Store the links for reverse web link graph
-  // NOTE: we need to discuss how to do this/what the format should be
   const linksKey = `${oldID}+links`;
   const linksInfo = {oldURL: oldURL, links: values};
   distribution.all.store.put(linksInfo, linksKey, (e, _v) => {
