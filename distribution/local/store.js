@@ -188,6 +188,11 @@ store.batchOperation = (op, params, callback) => {
   let cntr = params.length;
   let values = [];
 
+  if (params.length === 0) {
+    callback(null, []);
+    return;
+  }
+
   params.forEach((param) => {
     if (!Array.isArray(param)) {
       param = [param];
