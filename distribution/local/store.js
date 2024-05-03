@@ -180,4 +180,33 @@ store.multiAppend = (values, key, callback) => {
   });
 };
 
+store.batchOperation = (op, params, callback) => {
+  console.log("BEGIN LOCAL BATCH OPERATION on NODE ", id.getNID(global.nodeConfig));
+  // params should be an array of params to apply directly
+  callback = callback || function() {};
+
+  let cntr = params.length;
+  let values = [];
+
+  params.forEach((param) => {
+    if (!Array.isArray(param)) {
+      param = [param];
+    }
+
+    distribution.local.store[op](...param, (err, value) => {
+      if (err) {
+        callback(err, null);
+        return;
+      } else {
+        cntr--;
+        values.push(value);
+        if (cntr === 0) {
+          console.log("FINISH LOCAL BATCH OPERATION on NODE ", id.getNID(global.nodeConfig));
+          callback(null, values);
+        }
+      }
+    });
+  });
+};
+
 module.exports = store;

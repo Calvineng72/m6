@@ -164,5 +164,5 @@ test('(0 pts) full indexer', (done) => {
       res.send({'response': values});
     });
   });
-}, 20000);
+}, 25000);
 

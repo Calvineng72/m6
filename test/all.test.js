@@ -849,7 +849,9 @@ test('(0.5 pts) all.store.put(no key)', (done) => {
 
 test('(0.5 pts) all.store.multiAppend(data)', (done) => {
   const init = {'first': ['first'], 'last': ['last']};
-  const user = [{['first']: 'Josiah'}, {['last']: 'Carberry'}];
+  const user = [{['last']: {'Josiah': 'hi'}}, {['last']: 'Carberry'}];
+  // const user = [{'cat cat': {count: 1, url: 'https://www.meow.com/'}}, {'cat cat': {count: 1, url: 'https://www.meow.com/'}}];
+  console.log(user);
 
   distribution.mygroup.store.put(init, 'initkey', (e, v) => {
     console.log(e);
@@ -871,13 +873,48 @@ test('(0.5 pts) all.store.multiAppend(data)', (done) => {
             if (e) {
               fail(e);
             }
-            console.log("874");
+            console.log('874');
             console.log(v);
             console.log(multiOutput);
             expect(multiOutput).toEqual(v);
             done();
           });
         });
+      });
+    });
+  });
+});
+
+
+test('(0.5 pts) local.store.batchOperation(data)', (done) => {
+  const init = {'first': ['first'], 'last': ['last']};
+  const user = [{['first']: ['jos', 'josiah']}, {['last']: 'Carberry'}];
+  const ops = [[user, 'initKey'], [user, 'initKey'], [user, 'initKey']];
+  const expected = {
+    first: [
+      'first',
+      ['jos', 'josiah'],
+      ['jos', 'josiah'],
+      ['jos', 'josiah'],
+    ],
+    last: ['last', 'Carberry', 'Carberry', 'Carberry'],
+  };
+  // const user = [{'cat cat': {count: 1, url: 'https://www.meow.com/'}}, {'cat cat': {count: 1, url: 'https://www.meow.com/'}}];
+  console.log(user);
+
+  distribution.local.store.put(init, 'initkey', (e, v) => {
+    distribution.local.store.batchOperation('multiAppend', ops, (e, v) => {
+      if (e) {
+        fail(e);
+      }
+      console.log(v);
+      distribution.local.store.get('initKey', (e, v) => {
+        if (e) {
+          fail(e);
+        };
+        console.log('OUTPUT: ', v);
+        expect(v).toEqual(expected);
+        done();
       });
     });
   });

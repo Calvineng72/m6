@@ -263,6 +263,60 @@ let store = (config) => {
         }
       });
     },
+    batchOperation: (op, keys, params, callback) => {
+      callback = callback || function() {};
+      // keys must be supplied for this function to work
+
+      distribution.local.groups.get(context.gid, (err, val) => {
+        if (err) {
+          callback(Error('The group\'s nodes cannot be retrieved!'), null);
+        } else {
+          const allNodes = Object.values(val);
+          const nids = allNodes.map((node) => {
+            return id.getNID(node);
+          });
+
+          let separateParams = {};
+          for (let i = 0; i < nids.length; i++) {
+            separateParams[nids[i]] = [];
+          }
+
+          keys.forEach((key, i) => {
+            const nid = context.hash(id.getID(key), nids);
+            separateParams[nid].push(params[i]);
+          });
+          let count = nids.length;
+
+          for (let i = 0; i < nids.length; i++) {
+            console.log(`[LOG] sending BATCHOP to NODE ${nids[i]} of length: `, separateParams[nids[i]].length);
+
+            const remote = {
+              service: 'store',
+              method: 'batchOperation',
+              node: allNodes.find((node) => id.getNID(node) === nids[i]),
+            };
+            const message = [op, separateParams[nids[i]]];
+            let sender = () => {
+              distribution.local.comm.send(message, remote, (e, v) => {
+                if (e) {
+                  console.log(`ERROR IN ALL.BATCHOPERATION | NODE ${nids[i]}: `, e);
+                  console.log('RETRYING...');
+                  sender();
+                } else {
+                  count--;
+                  if (count === 0) {
+                    console.log('SUCCESS IN ALL.BATCHOPERATION');
+                    callback(null, v);
+                  }
+                }
+              });
+            };
+
+            sender();
+          }
+        }
+      });
+    },
   };
 };
 
