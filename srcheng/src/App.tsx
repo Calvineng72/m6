@@ -13,27 +13,23 @@ function App() {
 
   const handleSearch = async () => {
     setIsLoading(true);
-    // Simulate an API call
-    await new Promise(resolve => setTimeout(resolve, 500));
-    setResults([{
-      url: 'https://www.npmjs.com/package/@material-ui/core',
-      tags: ['npmjs', 'material-ui', 'core', 'React'],
-    }, {
-      url: 'https://www.npmjs.com/package/@mui/material',
-      tags: ['npmjs', 'mui', 'material', 'React'],
-    }, {
-      url: 'https://www.npmjs.com/package/@material-ui/icons',
-      tags: ['npmjs', 'material-ui', 'icons', 'React'],
-    }, {
-      url: 'https://www.npmjs.com/package/react-material-ui-form-validator',
-      tags: ['npmjs', 'form', 'validator', 'material-ui'],
-    }, {
-      url: 'https://www.npmjs.com/package/@mui/icons-material',
-      tags: ['npmjs', 'mui', 'icons', 'svg'],
-    }, {
-      url: 'https://www.npmjs.com/package/@material-ui/styles',
-      tags: ['npmjs', 'material-ui', 'styles', 'React'],
-    }]);
+
+    // call cluster
+    let url = 'localhost:3300/mr/query';
+    let req = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: searchTerm,
+    };
+
+    let res = await fetch(url, req);
+    let data = res.json();
+    let results = data['response'];
+
+    setResults(results);
+
     setIsLoading(false);
   };
 

@@ -6,7 +6,10 @@ const utils = require('./utils');
 const indexer = require('../distribution/subsystems/indexingSubsystem');
 const indexerMap = indexer.map;
 const indexerReduce = indexer.reduce;
-
+const crawler = require('../distribution/subsystems/crawlingSubsystem');
+const crawlerMap = crawler.map;
+const crawlerReduce = crawler.reduce;
+const query = require('../distribution/subsystems/querySubsystem');
 
 // setup express
 const app = express();
@@ -34,6 +37,42 @@ app.post('/store/get', (req, res) => {
       }
     }
     res.send({'response': value});
+  });
+});
+
+app.get('/mr/query', (req, res) => {
+  query(req.body, (result) => {
+    res.send({'response': result});
+  });
+});
+
+app.get('/mr/crawl', (req, res) => {
+  let dataset = req.body;
+
+  let keys = dataset.map((o) => utils.id.getID(Object.keys(o)[0]));
+  const doMapReduce = (_cb) => {
+    distribution.all.mr.exec({keys: keys, map: crawlerMap,
+      reduce: crawlerReduce}, (_e, v) => {
+      if (_e) {
+        return res.status(500).send({'error': _e});
+      }
+      res.send({'response': v});
+    });
+  };
+
+  let cntr = 0;
+
+  // We send the dataset to the cluster
+  dataset.forEach((o) => {
+    let key = utils.id.getID(Object.keys(o)[0]);
+    let value = o;
+    distribution.all.store.put(value, key, (_e, _v) => {
+      cntr++;
+      // Once we are done, run the map reduce
+      if (cntr === dataset.length) {
+        doMapReduce();
+      }
+    });
   });
 });
 
@@ -88,7 +127,7 @@ let groupAdder = (continuation) => {
 
 let serverStartup = () => {
   // listen
-  const port = 11000;
+  const port = 3300;
   app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
   });
