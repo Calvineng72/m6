@@ -76,14 +76,32 @@ afterAll((done) => {
 
 // ----------------------------------------------------- //
 
-const query = require('../distribution/subsystems/querySubsystem');
+const indexer = require('../distribution/subsystems/indexingSubsystem');
+const indexerMap = indexer.map;
+const indexerReduce = indexer.reduce;
 
-test('(0 pts) query subsystem', (done) => {
-  console.time('query');
-  query('serialize', (result) => {
-    expect(result).toBeDefined();
-    console.timeLog('query');
-    console.log(`The top URLs are: ${result}`);
-    done();
+
+test('(0 pts) indexer subsystem', (done) => {
+  console.time('index');
+
+  distribution.all.store.get(null, (err, values) => {
+    if (err.length > 0) {
+      console.log(err);
+      return res.status(500).send({'error': err});
+    }
+
+    let textKeys = values.filter((val) => val.endsWith('text'));
+    console.log('[LOG] length of textKeys:', textKeys.length);
+
+    distribution.all.mr.exec({keys: textKeys, map: indexerMap,
+      reduce: indexerReduce}, (err, values) => {
+      if (err.length > 0) {
+        console.log(err);
+        return res.status(500).send({'error': err});
+      }
+
+      console.timeLog('crawl');
+      done();
+    });
   });
-});
+}, 25000);

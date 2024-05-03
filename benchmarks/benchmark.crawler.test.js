@@ -76,14 +76,49 @@ afterAll((done) => {
 
 // ----------------------------------------------------- //
 
-const query = require('../distribution/subsystems/querySubsystem');
+const crawler = require('../distribution/subsystems/crawlingSubsystem');
+const crawlerMap = crawler.map;
+const crawlerReduce = crawler.reduce;
 
-test('(0 pts) query subsystem', (done) => {
-  console.time('query');
-  query('serialize', (result) => {
-    expect(result).toBeDefined();
-    console.timeLog('query');
-    console.log(`The top URLs are: ${result}`);
-    done();
+test('(0 pts) crawler subsystem', (done) => {
+  console.time('crawl');
+
+  let m = crawlerMap;
+  let r = crawlerReduce;
+
+  let dataset = [
+    {'https://www.npmjs.com/search?q=text':
+        'https://www.npmjs.com/search?q=text'},
+  ];
+
+  /* Now we do the same thing but on the cluster */
+  let keys = dataset.map((o) => id.getID(Object.keys(o)[0]));
+  const doMapReduce = (_cb) => {
+    distribution.all.mr.exec(
+        {keys: keys, map: m, reduce: r, rounds: 1},
+        (_e, v) => {
+          console.timeLog('crawl');
+          try {
+            expect(v).toBeDefined();
+            done();
+          } catch (e) {
+            done(e);
+          }
+        });
+  };
+
+  let cntr = 0;
+
+  // We send the dataset to the cluster
+  dataset.forEach((o) => {
+    let key = id.getID(Object.keys(o)[0]);
+    let value = o;
+    distribution.all.store.put(value, key, (_e, _v) => {
+      cntr++;
+      // Once we are done, run the map reduce
+      if (cntr === dataset.length) {
+        doMapReduce();
+      }
+    });
   });
-});
+}, 10000000);
