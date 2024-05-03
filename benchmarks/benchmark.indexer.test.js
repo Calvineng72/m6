@@ -91,7 +91,6 @@ test('(0 pts) indexer subsystem', (done) => {
     }
 
     let textKeys = values.filter((val) => val.endsWith('text'));
-    console.log('[LOG] length of textKeys:', textKeys.length);
 
     distribution.all.mr.exec({keys: textKeys, map: indexerMap,
       reduce: indexerReduce}, (err, values) => {
