@@ -32,8 +32,9 @@ function naiveHash(kid, nids) {
 }
 
 function consistentHash(kid, nids) {
-  const kNum = idToNum(kid);
-  const nodes = nids.map((nid) => ({nid: nid, num: idToNum(nid)}));
+  const kNum = distribution.util.id.idToNum(kid);
+  const nodes = nids.map((nid) => 
+    ({nid: nid, num: distribution.util.id.idToNum(nid)}));
 
   nodes.sort((a, b) => a.num - b.num);
   for (let i = 0; i < nodes.length; i++) {
